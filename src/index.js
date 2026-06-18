@@ -1,6 +1,6 @@
-  // Modules
+// Modules
 const os = require('os');
-const fs = require('fs-jetpack');
+const jetpack = require('fs-jetpack');
 const path = require('path');
 const fetch = require('wonderful-fetch');
 const downloads = require('downloads-folder');
@@ -20,7 +20,10 @@ module.exports = async function () {
     await download();
 
     // Launch
-    launch();
+    launch()
+    .then(() => {
+      install();
+    });
 
     return
   } catch (e) {
@@ -41,7 +44,7 @@ function clear() {
 
   log(`Clearing ${location}`)
 
-  fs.remove(location);
+  jetpack.remove(location);
 }
 
 function download(location) {
@@ -53,7 +56,7 @@ function download(location) {
 
     // Process
     const res = await fetch(url);
-    const fileStream = fs.createWriteStream(location);
+    const fileStream = jetpack.createWriteStream(location);
 
     await new Promise((resolve, reject) => {
       res.body.pipe(fileStream);
@@ -90,7 +93,7 @@ function getURL() {
   }
 }
 
-function launch() {
+async function launch() {
   const location = getDownloadPath();
   const name = os.type();
 
@@ -117,6 +120,43 @@ function launch() {
     error('Application failed to execute:', e);
     console.log('\n\n\n')
     log(`Please launch the app manually: ${location}`);
+  }
+}
+
+async function install() {
+  const location = getDownloadPath();
+  const name = os.type();
+  const parsedPath = path.parse(location);
+  const filename = parsedPath.name;
+
+  try {
+    if (name === 'Darwin') {
+      log(`Attempting to install ${location}...`);
+
+      const volumes = jetpack.list('/Volumes').sort().reverse();
+      const found = volumes.find(v => v.includes(filename));
+      const applicationPath = `/Applications/${filename}.app`;
+
+      // Check if the app is mounted
+      if (!found) {
+        return setTimeout(() => {
+          install();
+        }, 1000);
+      }
+
+      // Remove the app if it already exists
+      if (jetpack.exists(applicationPath)) {
+        jetpack.remove(applicationPath);
+      }
+
+      // Copy the app to the Applications folder
+      jetpack.copy(path.join('/Volumes', found, `${filename}.app`), applicationPath)
+      await powertools.execute(`open "${applicationPath}"`);
+    }
+  } catch (e) {
+    error('Application failed to install:', e);
+    console.log('\n\n\n')
+    log(`Please install the app manually: ${location}`);
   }
 }
 
