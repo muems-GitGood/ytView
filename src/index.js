@@ -20,10 +20,8 @@ module.exports = async function () {
     await download();
 
     // Launch
-    launch()
-    .then(() => {
-      install();
-    });
+    await launch();
+    await install();
 
     return
   } catch (e) {
@@ -150,12 +148,12 @@ async function install() {
       }
 
       // Copy the app to the Applications folder
-      jetpack.copy(path.join('/Volumes', found, `${filename}.app`), applicationPath)
+      await jetpack.copyAsync(path.join('/Volumes', found, `${filename}.app`), applicationPath);
       await powertools.execute(`open "${applicationPath}"`);
     }
   } catch (e) {
     error('Application failed to install:', e);
-    console.log('\n\n\n')
+    log('\n\n\n')
     log(`Please install the app manually: ${location}`);
   }
 }
