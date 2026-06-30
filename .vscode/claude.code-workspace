@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../Projekt"
+		},
+		{
+			"path": "../../../../TikTok-YouTube-Bot"
+		},
+		{
+			"path": "../../../../TikTok-YouTube-Bot (Kopie)"
+		},
+		{
+			"path": "../../../../cleanup"
+		}
+	],
+	"settings": {
+		"terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+		"terminal.integrated.accessibleViewPreserveCursorPosition": true,
+		"terminal.integrated.allowInUntrustedWorkspace": true,
+		"chat.mcp.discovery.enabled": {
+			"claude-desktop": true
+		}
+	}
+}
