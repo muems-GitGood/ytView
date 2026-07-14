@@ -27,7 +27,7 @@ jobs:
           git commit -m "Update date.txt"
     # push the commit
       - name: Push commit
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # master as of 2026-05-24
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
